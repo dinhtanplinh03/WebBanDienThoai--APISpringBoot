@@ -1,0 +1,51 @@
+package com.example.demo.service;
+
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // Lấy tất cả users
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Lấy user theo ID
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    // Thêm user mới
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
+
+    // Cập nhật user
+    public User updateUser(Long id, User newUser) {
+        return userRepository.findById(id).map(user -> {
+            user.setUsername(newUser.getUsername());
+            user.setEmail(newUser.getEmail());
+            user.setPhone(newUser.getPhone());
+            user.setAddress(newUser.getAddress());
+            user.setRole(newUser.getRole());
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // Xóa user
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
+}
